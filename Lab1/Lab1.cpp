@@ -17,6 +17,7 @@ private:
     string word; //слово для поиска
     string* phrases; //массив со всеми фразами
     string* new_phrases; //массив с фразами, где есть слово
+    string* a_phrases; //массив с фразами, где слов нет
 public:
     Dictionary(unsigned int a) {
         count = a;
@@ -31,27 +32,13 @@ public:
         };
         //count--;
     }
-    void set_word() {
-        cout << "Напишите слово для поиска: ";
-        cin >> word;
-    }
-    void get_word()const 
-    {
-        cout << word;
-    }
-    void get_elem()const 
-    {
-        for (int i = 0; i < count; i++) {
-            cout << phrases[i] << endl;
-        };
-    }
     void find() 
     {
         if (word == "") {
             cout << "error" << endl;
         }
         else if (word != "") { //баги реализации ввода рандомных символов все равно будет работать
-            cout << "Нажмите 1, если фраза на английском. Нажмите 0, если фраза на русском. ";
+            cout << "Введите 1, если фраза на английском. Введите 0, если фраза на русском. ";
             cin >> lang;
             if (lang == 1) {
                 setlocale(LC_ALL, "eng");
@@ -74,6 +61,10 @@ public:
                 }
                 int c = phrases[i].find(word); //работает для совпадения: фраза: покакает, слово: пока, совпадение будет
                 if (c == -1) {
+                    if (i == (count-1)) {
+                        a_count = count - new_count - 1;
+                        //cout << "Это а_каунт: " << a_count;
+                    }
                     continue;
                 }
                 else if (c != -1) {
@@ -81,13 +72,14 @@ public:
                     ++counter;
                     new_count = counter;
                     if (i == (count-1)) {
-                        a_count = count - new_count;
+                        a_count = count - new_count - 1; //!!!!
+                        //cout << "Это а_каунт: " << a_count;
                     }
                 };
             }; 
         }
     }
-    void sort_a1() //length phrases
+    void main_sort() //length phrases
     {
         for (int i = 0; i < count; i++) {
             for (int j = 0; j < (count - 1); j++) {
@@ -99,7 +91,7 @@ public:
             }
         }
     }
-    void sort_a2() //length new_phrases
+    void sort_a1() //length new_phrases
     {
         for (int i = 0; i < new_count; i++) {
             for (int j = 0; j < (new_count - 1); j++) {
@@ -111,19 +103,19 @@ public:
             }
         }
     }
-    void sort_b1() //alphabet phrases
+    void sort_a2() //length a_phrases
     {
-        for (int i = 0; i < count; i++) {
-            for (int j = 0; j < (count - 1); j++) {
-                if (strcmp(phrases[j].c_str(), phrases[j+1].c_str()) > 0) {
-                    string temp = phrases[j];
-                    phrases[j] = phrases[j + 1];
-                    phrases[j + 1] = temp;
+        for (int i = 0; i < a_count; i++) {
+            for (int j = 0; j < (a_count - 1); j++) {
+                if (a_phrases[j].length() > a_phrases[j + 1].length()) {
+                    string temp = a_phrases[j];
+                    a_phrases[j] = a_phrases[j + 1];
+                    a_phrases[j + 1] = temp;
                 }
             }
         }
     }
-    void sort_b2() //alphabet new_phrases
+    void sort_b1() //alphabet new_phrases
     {
         for (int i = 0; i < new_count; i++) {
             for (int j = 0; j < (new_count - 1); j++) {
@@ -135,25 +127,61 @@ public:
             }
         }
     }
+    void sort_b2() //alphabet a_phrases
+    {
+        for (int i = 0; i < a_count; i++) {
+            for (int j = 0; j < (a_count - 1); j++) {
+                if (strcmp(a_phrases[j].c_str(), a_phrases[j + 1].c_str()) > 0) {
+                    string temp = a_phrases[j];
+                    a_phrases[j] = a_phrases[j + 1];
+                    a_phrases[j + 1] = temp;
+                }
+            }
+        }
+    }
+    void create_array() //problem
+    {
+        a_phrases = new string[a_count];
+        for (int i = 0; i < a_count; i++) {
+            for (int j = 0; j < new_count; j++) {
+                for (int k = 0; k < count; k++) {
+                    if (strcmp(new_phrases[j].c_str(), phrases[k].c_str()) != 0) {
+                        if (a_phrases[i] != phrases[k]) {
+                            a_phrases[i] = phrases[k];
+                        
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    void set_word() {
+        cout << "Введите слово для поиска: ";
+        cin >> word;
+    }
+    void get_word()const
+    {
+        cout << word;
+    }
+    void get_all_phrases()const
+    {
+        for (int i = 0; i < count; i++) {
+            cout << phrases[i] << endl;
+        };
+    }
     void show_phrases()
     {
         if (lang == 1) {
             setlocale(LC_ALL, "eng");
         }
-        cout << "Phrases without word:";
-        for (int i = 0; i < count; i++) {
-            cout << phrases[i] << endl;
+        cout << "Phrases without word:" << endl;
+        for (int i = 0; i < a_count; i++) {
+            cout << a_phrases[i] << endl;
         }
         cout << "Phrases with word:" << endl;
         for (int i = 0; i < new_count; i++) {
             cout << new_phrases[i] << endl;
-        }
-    }
-    void correct_array() 
-    {
-        string* a_phrase = new string[a_count];
-        for (int i = 0, b = 0; i < a_count, b < count; i++) {
-            //final doing...
         }
     }
 };
@@ -163,16 +191,32 @@ int main()
     setlocale(LC_ALL, "rus");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
+
     unsigned int t;
     cout << "Введите количество фраз: ";
     cin >> t;
-    string* a_phrase;
     Dictionary phrase(t);
 
     phrase.set_word();
     phrase.find();
-    phrase.sort_a1();
-    phrase.sort_a2();
+    phrase.create_array();
+
+    int in;
+    int a_in;
+    cout << "Фразы, содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> in;
+    if (in == 1) {
+        phrase.sort_a1();
+    }
+    else if (in == 2) {
+        phrase.sort_b1();
+    }
+    cout << "Фразы, не содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> a_in;
+    if (in == 1) {
+        phrase.sort_a2();
+    }
+    else if (in == 2) {
+        phrase.sort_b2();
+    }
 
     phrase.show_phrases();
 }
