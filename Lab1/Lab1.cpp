@@ -6,25 +6,25 @@
 #include<Windows.h>
 using namespace std;
 
-//?: влияет ли регистр слова на поиск - не влияет
+//?: ГўГ«ГЁГїГҐГІ Г«ГЁ Г°ГҐГЈГЁГ±ГІГ° Г±Г«Г®ГўГ  Г­Г  ГЇГ®ГЁГ±ГЄ - Г­ГҐ ГўГ«ГЁГїГҐГІ
 
 class Dictionary {
 private:
-    unsigned int count; //всего фраз
-    unsigned int new_count; //фраз без слова
+    unsigned int count; //ГўГ±ГҐГЈГ® ГґГ°Г Г§
+    unsigned int new_count; //ГґГ°Г Г§ ГЎГҐГ§ Г±Г«Г®ГўГ 
     int a_count;
-    int lang; //выбор языка
-    string word; //слово для поиска
-    string* phrases; //массив со всеми фразами
-    string* new_phrases; //массив с фразами, где есть слово
-    string* a_phrases; //массив с фразами, где слов нет
+    int lang; //ГўГ»ГЎГ®Г° ГїГ§Г»ГЄГ 
+    string word; //Г±Г«Г®ГўГ® Г¤Г«Гї ГЇГ®ГЁГ±ГЄГ 
+    string* phrases; //Г¬Г Г±Г±ГЁГў Г±Г® ГўГ±ГҐГ¬ГЁ ГґГ°Г Г§Г Г¬ГЁ
+    string* new_phrases; //Г¬Г Г±Г±ГЁГў Г± ГґГ°Г Г§Г Г¬ГЁ, ГЈГ¤ГҐ ГҐГ±ГІГј Г±Г«Г®ГўГ®
+    string* a_phrases; //Г¬Г Г±Г±ГЁГў Г± ГґГ°Г Г§Г Г¬ГЁ, ГЈГ¤ГҐ Г±Г«Г®Гў Г­ГҐГІ
 public:
     Dictionary(unsigned int a) {
         count = a;
         count++;
         phrases = new string [count];
         new_phrases = new string [count];
-        cout << "Введите фразы:" << endl;
+        cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГґГ°Г Г§Г»:" << endl;
         for (int i = 0; i < (count); i++) {
             string temp;
             getline(cin, temp);
@@ -37,8 +37,8 @@ public:
         if (word == "") {
             cout << "error" << endl;
         }
-        else if (word != "") { //баги реализации ввода рандомных символов все равно будет работать
-            cout << "Введите 1, если фраза на английском. Введите 0, если фраза на русском. ";
+        else if (word != "") { //ГЎГ ГЈГЁ Г°ГҐГ Г«ГЁГ§Г Г¶ГЁГЁ ГўГўГ®Г¤Г  Г°Г Г­Г¤Г®Г¬Г­Г»Гµ Г±ГЁГ¬ГўГ®Г«Г®Гў ГўГ±ГҐ Г°Г ГўГ­Г® ГЎГіГ¤ГҐГІ Г°Г ГЎГ®ГІГ ГІГј
+            cout << "Г‚ГўГҐГ¤ГЁГІГҐ 1, ГҐГ±Г«ГЁ ГґГ°Г Г§Г  Г­Г  Г Г­ГЈГ«ГЁГ©Г±ГЄГ®Г¬. Г‚ГўГҐГ¤ГЁГІГҐ 0, ГҐГ±Г«ГЁ ГґГ°Г Г§Г  Г­Г  Г°ГіГ±Г±ГЄГ®Г¬. ";
             cin >> lang;
             if (lang == 1) {
                 setlocale(LC_ALL, "eng");
@@ -59,11 +59,11 @@ public:
                     setlocale(LC_ALL, "rus");
                     transform(phrases[i].begin(), phrases[i].end(), phrases[i].begin(), (int(*)(int))tolower);
                 }
-                int c = phrases[i].find(word); //работает для совпадения: фраза: покакает, слово: пока, совпадение будет
+                int c = phrases[i].find(word); //Г°Г ГЎГ®ГІГ ГҐГІ Г¤Г«Гї Г±Г®ГўГЇГ Г¤ГҐГ­ГЁГї: ГґГ°Г Г§Г : ГЇГ®ГЄГ ГЄГ ГҐГІ, Г±Г«Г®ГўГ®: ГЇГ®ГЄГ , Г±Г®ГўГЇГ Г¤ГҐГ­ГЁГҐ ГЎГіГ¤ГҐГІ
                 if (c == -1) {
                     if (i == (count-1)) {
                         a_count = count - new_count - 1;
-                        //cout << "Это а_каунт: " << a_count;
+                        //cout << "ГќГІГ® Г _ГЄГ ГіГ­ГІ: " << a_count;
                     }
                     continue;
                 }
@@ -73,7 +73,7 @@ public:
                     new_count = counter;
                     if (i == (count-1)) {
                         a_count = count - new_count - 1; //!!!!
-                        //cout << "Это а_каунт: " << a_count;
+                        //cout << "ГќГІГ® Г _ГЄГ ГіГ­ГІ: " << a_count;
                     }
                 };
             }; 
@@ -139,7 +139,7 @@ public:
             }
         }
     }
-    void create_array() //problem
+    void create_array() //problem with the rewriting last element
     {
         a_phrases = new string[a_count];
         for (int i = 0; i < a_count; i++) {
@@ -157,7 +157,7 @@ public:
         }
     }
     void set_word() {
-        cout << "Введите слово для поиска: ";
+        cout << "Г‚ГўГҐГ¤ГЁГІГҐ Г±Г«Г®ГўГ® Г¤Г«Гї ГЇГ®ГЁГ±ГЄГ : ";
         cin >> word;
     }
     void get_word()const
@@ -193,7 +193,7 @@ int main()
     SetConsoleOutputCP(1251);
 
     unsigned int t;
-    cout << "Введите количество фраз: ";
+    cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГґГ°Г Г§: ";
     cin >> t;
     Dictionary phrase(t);
 
@@ -203,14 +203,14 @@ int main()
 
     int in;
     int a_in;
-    cout << "Фразы, содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> in;
+    cout << "Г”Г°Г Г§Г», Г±Г®Г¤ГҐГ°Г Г¦Г Г№ГЁГҐ Г±Г«Г®ГўГ® Г±Г®Г°ГІГЁГ°Г®ГўГ ГІГј ГЇГ®: 1 - ГЇГ® Г¤Г«ГЁГ­ГҐ, 2 - ГЇГ® Г Г«ГґГ ГўГЁГІГі: "; cin >> in;
     if (in == 1) {
         phrase.sort_a1();
     }
     else if (in == 2) {
         phrase.sort_b1();
     }
-    cout << "Фразы, не содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> a_in;
+    cout << "Г”Г°Г Г§Г», Г­ГҐ Г±Г®Г¤ГҐГ°Г Г¦Г Г№ГЁГҐ Г±Г«Г®ГўГ® Г±Г®Г°ГІГЁГ°Г®ГўГ ГІГј ГЇГ®: 1 - ГЇГ® Г¤Г«ГЁГ­ГҐ, 2 - ГЇГ® Г Г«ГґГ ГўГЁГІГі: "; cin >> a_in;
     if (in == 1) {
         phrase.sort_a2();
     }
