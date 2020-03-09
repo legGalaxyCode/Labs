@@ -51,7 +51,7 @@ public:
         if (word == "") {
             cout << "error" << endl;
         }
-        else if (word != "") { //баги реализации ввода рандомных символов все равно будет работать
+        else if (word != "") { //баги реализации ввода рандомных символов - все равно будет работать
             cout << "¬ведите 1, если фраза на английском. ¬ведите 0, если фраза на русском. ";
             cin >> lang;
             if (lang == 1) {
@@ -66,14 +66,6 @@ public:
             static int counter2 = 0;
             setlocale(LC_ALL, "rus");
             for (unsigned int i = 0; i < count; i++) {
-                if (lang == 1) {
-                    setlocale(LC_ALL, "eng");
-                    transform(phrases[i].begin(), phrases[i].end(), phrases[i].begin(), (int(*)(int))tolower); 
-                }
-                else if (lang == 0) {
-                    setlocale(LC_ALL, "rus");
-                    transform(phrases[i].begin(), phrases[i].end(), phrases[i].begin(), (int(*)(int))tolower);
-                }
                 int c = phrases[i].find(word);//работает дл€ совпадени€: фраза: покакает, слово: пока, совпадение будет - исправлено
                 if ((c != -1 && phrases[i][c + word_len] != ' ' && phrases[i].length() != word_len && phrases[i][phrases[i].length() - 1] != word[word_len - 1]) || c == -1) {
                     a_phrases[counter2] = phrases[i];
@@ -191,7 +183,7 @@ public:
             setlocale(LC_ALL, "eng");
         }
         cout << "Phrases without word:" << endl;
-        for (int i = 0; i < a_count; i++) {
+        for (int i = 1; i < a_count; i++) {
             cout << a_phrases[i] << " " << i << endl;
         }
         cout << "Phrases with word:" << endl;
