@@ -235,6 +235,5 @@ int main()
         dicts->sort_b2();
     }
 
-
     dicts->show_phrases();
 }
