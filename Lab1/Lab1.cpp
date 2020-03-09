@@ -2,18 +2,20 @@
 #include<cctype>
 #include<algorithm>
 #include<iostream>
+#include <cstdlib>
 #include<string>
 #include<Windows.h>
 using namespace std;
 
-//?: влияет ли регистр слова на поиск - не влияет
+//по дефолту 0 элемент
 
 class Dictionary {
 private:
-    unsigned int count; //всего фраз
-    unsigned int new_count; //фраз без слова
-    int a_count;
-    int lang; //выбор языка
+    unsigned int count = 0; //всего фраз
+    unsigned int new_count = 0; //фраз без слова
+    unsigned int a_count = 0; //фраз со словом
+    int word_len = 0; //длина слова
+    int lang = 0; //выбор языка
     string word; //слово для поиска
     string* phrases; //массив со всеми фразами
     string* new_phrases; //массив с фразами, где есть слово
@@ -24,6 +26,7 @@ public:
         count++;
         phrases = new string [count];
         new_phrases = new string [count];
+        a_phrases = new string [count];
         cout << "Введите фразы:" << endl;
         for (int i = 0; i < (count); i++) {
             string temp;
@@ -31,6 +34,17 @@ public:
             phrases[i] = temp;
         };
         //count--;
+    }
+    ~Dictionary() {
+        for (int i = 0; i < count; i++) {
+            delete[] phrases;
+        }
+        for (int i = 0; i < new_count; i++) {
+            delete[] new_phrases;
+        }
+        for (int i = 0; i < a_count; i++) {
+            delete[] a_phrases;
+        }
     }
     void find() 
     {
@@ -49,6 +63,7 @@ public:
                 transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower);
             }
             static int counter = 0;
+            static int counter2 = 0;
             setlocale(LC_ALL, "rus");
             for (unsigned int i = 0; i < count; i++) {
                 if (lang == 1) {
@@ -59,22 +74,16 @@ public:
                     setlocale(LC_ALL, "rus");
                     transform(phrases[i].begin(), phrases[i].end(), phrases[i].begin(), (int(*)(int))tolower);
                 }
-                int c = phrases[i].find(word); //работает для совпадения: фраза: покакает, слово: пока, совпадение будет
-                if (c == -1) {
-                    if (i == (count-1)) {
-                        a_count = count - new_count - 1;
-                        //cout << "Это а_каунт: " << a_count;
-                    }
-                    continue;
+                int c = phrases[i].find(word);//работает для совпадения: фраза: покакает, слово: пока, совпадение будет - исправлено
+                if ((c != -1 && phrases[i][c + word_len] != ' ' && phrases[i].length() != word_len && phrases[i][phrases[i].length() - 1] != word[word_len - 1]) || c == -1) {
+                    a_phrases[counter2] = phrases[i];
+                    //counter2++;
+                    a_count = ++counter2;
                 }
-                else if (c != -1) {
+                else if (c != -1 && (phrases[i][c+word_len] == ' ' || phrases[i].length() == word_len || phrases[i][phrases[i].length()-1] == word[word_len-1])) {
                     new_phrases[counter] = phrases[i];
                     ++counter;
                     new_count = counter;
-                    if (i == (count-1)) {
-                        a_count = count - new_count - 1; //!!!!
-                        //cout << "Это а_каунт: " << a_count;
-                    }
                 };
             }; 
         }
@@ -139,18 +148,23 @@ public:
             }
         }
     }
-    void create_array() //problem
+    void create_array() //метод уже не используется, но пусть будет тут, как отражение моего позора
     {
         a_phrases = new string[a_count];
         for (int i = 0; i < a_count; i++) {
+            int cter = 0;
             for (int j = 0; j < new_count; j++) {
                 for (int k = 0; k < count; k++) {
                     if (strcmp(new_phrases[j].c_str(), phrases[k].c_str()) != 0) {
-                        if (a_phrases[i] != phrases[k]) {
-                            a_phrases[i] = phrases[k];
-                        
+                        for (int m = 0; m < a_count; m++) {
+                            if (phrases[k] != a_phrases[m]) {
+                                cter++;
+                                if (cter == a_count) {
+                                    a_phrases[i] = phrases[k]; //просщелкивать индекс i, проверять на принадлежность этому же массиву
+                                    cter = 0;
+                                }
+                            }
                         }
-                        continue;
                     }
                 }
             }
@@ -159,6 +173,7 @@ public:
     void set_word() {
         cout << "Введите слово для поиска: ";
         cin >> word;
+        word_len = word.length();
     }
     void get_word()const
     {
@@ -177,7 +192,7 @@ public:
         }
         cout << "Phrases without word:" << endl;
         for (int i = 0; i < a_count; i++) {
-            cout << a_phrases[i] << endl;
+            cout << a_phrases[i] << " " << i << endl;
         }
         cout << "Phrases with word:" << endl;
         for (int i = 0; i < new_count; i++) {
@@ -195,29 +210,30 @@ int main()
     unsigned int t;
     cout << "Введите количество фраз: ";
     cin >> t;
-    Dictionary phrase(t);
+    Dictionary* dicts;
+    dicts = new Dictionary(t);
+    //Dictionary phrase(t);
 
-    phrase.set_word();
-    phrase.find();
-    phrase.create_array();
+    dicts->set_word();
+    dicts->find();
+    //dicts->create_array();
 
     int in;
     int a_in;
     cout << "Фразы, содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> in;
     if (in == 1) {
-        phrase.sort_a1();
+        dicts->sort_a1();
     }
     else if (in == 2) {
-        phrase.sort_b1();
+        dicts->sort_b1();
     }
     cout << "Фразы, не содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> a_in;
     if (in == 1) {
-        phrase.sort_a2();
+        dicts->sort_a2();
     }
     else if (in == 2) {
-        phrase.sort_b2();
+        dicts->sort_b2();
     }
 
-    phrase.show_phrases();
+    dicts->show_phrases();
 }
-
