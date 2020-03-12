@@ -7,19 +7,20 @@
 #include<Windows.h>
 using namespace std;
 
-//по дефолту 0 элемент
+//zero error need to fix
+//word find case need to fix
 
 class Dictionary {
 private:
-    unsigned int count = 0; //всего фраз
-    unsigned int new_count = 0; //фраз без слова
-    unsigned int a_count = 0; //фраз со словом
-    int word_len = 0; //длина слова
-    int lang = 0; //выбор €зыка
-    string word; //слово дл€ поиска
-    string* phrases; //массив со всеми фразами
-    string* new_phrases; //массив с фразами, где есть слово
-    string* a_phrases; //массив с фразами, где слов нет
+    unsigned int count = 0; //all phrases count
+    unsigned int new_count = 0; //phrases without word count
+    unsigned int a_count = 0; //phrases with word count
+    int word_len = 0; //word length
+    int lang = 0; //language settings
+    string word; //word
+    string* phrases; //array with all phrases
+    string* new_phrases; //array with word-phrases
+    string* a_phrases; //array with none word-phrases
 public:
     Dictionary(unsigned int a) {
         count = a;
@@ -27,13 +28,12 @@ public:
         phrases = new string [count];
         new_phrases = new string [count];
         a_phrases = new string [count];
-        cout << "¬ведите фразы:" << endl;
+        cout << "Input the pharses: " << endl;
         for (int i = 0; i < (count); i++) {
             string temp;
             getline(cin, temp);
             phrases[i] = temp;
         };
-        //count--;
     }
     ~Dictionary() {
         for (int i = 0; i < count; i++) {
@@ -51,36 +51,34 @@ public:
         if (word == "") {
             cout << "error" << endl;
         }
-        else if (word != "") { //баги реализации ввода рандомных символов - все равно будет работать
-            cout << "¬ведите 1, если фраза на английском. ¬ведите 0, если фраза на русском. ";
+        else if (word != "") { //bugs with random symbols
+            cout << "Input 1 if u use english lang. Input 0 if u use russian lang. "; // 1 - eng, 0 - rus
             cin >> lang;
             if (lang == 1) {
                 setlocale(LC_ALL, "eng");
-                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower);
+                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower); //to lower case all phrases in eng lang
             }
             else if (lang == 0) {
                 setlocale(LC_ALL, "rus");
-                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower);
+                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower); //to lower case all phrases in rus lang
             }
             static int counter = 0;
             static int counter2 = 0;
             setlocale(LC_ALL, "rus");
             for (unsigned int i = 0; i < count; i++) {
-                int c = phrases[i].find(word);//работает дл€ совпадени€: фраза: покакает, слово: пока, совпадение будет - исправлено
+                int c = phrases[i].find(word);//need tolower
                 if ((c != -1 && phrases[i][c + word_len] != ' ' && phrases[i].length() != word_len && phrases[i][phrases[i].length() - 1] != word[word_len - 1]) || c == -1) {
                     a_phrases[counter2] = phrases[i];
-                    //counter2++;
                     a_count = ++counter2;
                 }
                 else if (c != -1 && (phrases[i][c+word_len] == ' ' || phrases[i].length() == word_len || phrases[i][phrases[i].length()-1] == word[word_len-1])) {
                     new_phrases[counter] = phrases[i];
-                    ++counter;
-                    new_count = counter;
+                    new_count = ++counter;
                 };
             }; 
         }
     }
-    void main_sort() //length phrases
+    void main_sort() //length phrases bubble
     {
         for (int i = 0; i < count; i++) {
             for (int j = 0; j < (count - 1); j++) {
@@ -92,7 +90,7 @@ public:
             }
         }
     }
-    void sort_a1() //length new_phrases
+    void sort_a1() //length new_phrases bubble
     {
         for (int i = 0; i < new_count; i++) {
             for (int j = 0; j < (new_count - 1); j++) {
@@ -104,7 +102,7 @@ public:
             }
         }
     }
-    void sort_a2() //length a_phrases
+    void sort_a2() //length a_phrases bubble
     {
         for (int i = 0; i < a_count; i++) {
             for (int j = 0; j < (a_count - 1); j++) {
@@ -116,7 +114,7 @@ public:
             }
         }
     }
-    void sort_b1() //alphabet new_phrases
+    void sort_b1() //alphabet new_phrases bubble
     {
         for (int i = 0; i < new_count; i++) {
             for (int j = 0; j < (new_count - 1); j++) {
@@ -128,7 +126,7 @@ public:
             }
         }
     }
-    void sort_b2() //alphabet a_phrases
+    void sort_b2() //alphabet a_phrases bubble
     {
         for (int i = 0; i < a_count; i++) {
             for (int j = 0; j < (a_count - 1); j++) {
@@ -140,7 +138,7 @@ public:
             }
         }
     }
-    void create_array() //метод уже не используетс€, но пусть будет тут, как отражение моего позора
+    void create_array() //this shit is blaming me in my stupidity, actually dont use it
     {
         a_phrases = new string[a_count];
         for (int i = 0; i < a_count; i++) {
@@ -152,7 +150,7 @@ public:
                             if (phrases[k] != a_phrases[m]) {
                                 cter++;
                                 if (cter == a_count) {
-                                    a_phrases[i] = phrases[k]; //просщелкивать индекс i, провер€ть на принадлежность этому же массиву
+                                    a_phrases[i] = phrases[k]; 
                                     cter = 0;
                                 }
                             }
@@ -163,7 +161,7 @@ public:
         }
     }
     void set_word() {
-        cout << "¬ведите слово дл€ поиска: ";
+        cout << "Input the word for searching: ";
         cin >> word;
         word_len = word.length();
     }
@@ -200,26 +198,24 @@ int main()
     SetConsoleOutputCP(1251);
 
     unsigned int t;
-    cout << "¬ведите количество фраз: ";
+    cout << "Input the count of all phrases: ";
     cin >> t;
     Dictionary* dicts;
     dicts = new Dictionary(t);
-    //Dictionary phrase(t);
 
     dicts->set_word();
     dicts->find();
-    //dicts->create_array();
 
     int in;
     int a_in;
-    cout << "‘разы, содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> in;
+    cout << "Phrases with word will sort by: 1 - lenght, 2 - alphabetical order: "; cin >> in; // 1 - len, 2 - alph
     if (in == 1) {
         dicts->sort_a1();
     }
     else if (in == 2) {
         dicts->sort_b1();
     }
-    cout << "‘разы, не содеражащие слово сортировать по: 1 - по длине, 2 - по алфавиту: "; cin >> a_in;
+    cout << "Phrases without word will sort by: 1 - length, 2 - alphabetical order: "; cin >> a_in; // 1 - len, 2 - alph
     if (in == 1) {
         dicts->sort_a2();
     }
