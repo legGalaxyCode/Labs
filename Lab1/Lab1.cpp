@@ -1,14 +1,11 @@
-#include<cmath>
-#include<cctype>
 #include<algorithm>
 #include<iostream>
-#include <cstdlib>
 #include<string>
 #include<Windows.h>
 using namespace std;
 
-//zero error need to fix
-//word find case need to fix
+//zero error need to be fixed
+//word find case need to be fixed
 
 class Dictionary {
 private:
@@ -56,12 +53,12 @@ public:
             cin >> lang;
             if (lang == 1) {
                 setlocale(LC_ALL, "eng");
-                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower); //to lower case all phrases in eng lang
+                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower); //to lower case word in eng lang
             }
             else if (lang == 0) {
                 setlocale(LC_ALL, "rus");
-                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower); //to lower case all phrases in rus lang
-            }
+                transform(word.begin(), word.end(), word.begin(), (int(*)(int))tolower); //to lower case word in rus lang
+            } //tolower all phrases!
             static int counter = 0;
             static int counter2 = 0;
             setlocale(LC_ALL, "rus");
@@ -182,7 +179,7 @@ public:
         }
         cout << "Phrases without word:" << endl;
         for (int i = 1; i < a_count; i++) {
-            cout << a_phrases[i] << " " << i << endl;
+            cout << a_phrases[i] << endl;
         }
         cout << "Phrases with word:" << endl;
         for (int i = 0; i < new_count; i++) {
